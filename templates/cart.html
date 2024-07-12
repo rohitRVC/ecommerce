@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Cart - My E-commerce Site{% endblock %}
+
+
+{% block content %}
+<!-- cart.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <style>
+        .product-image {
+            width: 100px;
+            height: auto;
+        }
+        .quantity-control {
+            display: inline-flex;
+            align-items: center;
+        }
+        .quantity-control button {
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Cart</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>
+                        <img src="{{ item.product.image1.url }}" alt="{{ item.product.name }}" class="product-image">
+                        {{ item.product.name }}
+                    </td>
+                    <td class="quantity-control">
+                        <form method="post" action="{% url 'update_quantity' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="decrease">-</button>
+                            {{ item.quantity }}
+                            <button type="submit" name="action" value="increase">+</button>
+                        </form>
+                    </td>
+                    <td>{{ item.product.price }}</td>
+                    <td>
+                        {% with total=item.product.price|floatformat:2|add:item.quantity|floatformat:2 %}
+                            {{ total }}
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'remove_from_cart' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h2>Total Price: {{ total_price }}</h2>
+        <button type="button">Checkout</button>
+    </div>
+</body>
+</html>
+
+{% endblock %}

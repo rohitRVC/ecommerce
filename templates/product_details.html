@@ -1,0 +1,62 @@
+<!-- product_details.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }}</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .product-image {
+            width: 100%; /* Ensure images fill the card */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 5px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ product.name }}</h1>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ product.image1.url }}" class="card-img-top product-image" alt="Product Image">
+                    <img src="{{ product.image2.url }}" class="card-img-top product-image" alt="Product Image">
+                    <img src="{{ product.image3.url }}" class="card-img-top product-image" alt="Product Image">
+                    <img src="{{ product.image4.url }}" class="card-img-top product-image" alt="Product Image">
+                    <img src="{{ product.image5.url }}" class="card-img-top product-image" alt="Product Image">
+                    <img src="{{ product.image6.url }}" class="card-img-top product-image" alt="Product Image">
+                    <div class="card-body">
+                        <h5 class="card-title">Image</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Category:</strong> {{ product.category }}</p>
+                <p><strong>Price:</strong> {{ product.price }}</p>
+                <p><strong>Description:</strong></p>
+                <p>{{ product.description }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="{% url 'cart' %}" class="btn btn-primary">Add to Cart</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional: Include Bootstrap JS for button styles -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% load static %}
+
+
+<title>
+    {% block title %}{{ title }}{% endblock %}
+</title>
+
+    {% if user.is_staff %}
+        {% include "admin_header.html" %}
+    {% else %}
+        {% include "header.html" %}
+    {% endif %}
+
+
+{% block content %}
+
+{% endblock %}
+
+{% include "footer.html" %}

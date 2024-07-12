@@ -1,0 +1,25 @@
+<!-- templates/delete_category.html -->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Category</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+</head>
+<body>
+    <h1>Delete Category</h1>
+    <p>Are you sure you want to delete "{{ category.name }}"?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Yes, delete</button>
+        <a href="{% url 'categories' %}">Cancel</a>
+    </form>
+</body>
+</html>
+{% endblock %}

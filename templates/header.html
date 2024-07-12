@@ -1,0 +1,49 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}
+        {% endblock %}
+    
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="brand-title">E-Shop</div>
+            <a href="javascript:void(0);" class="toggle-button" onclick="toggleNavbar()">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </a>
+            <div class="navbar-links">
+                <ul>
+                    <li>
+                        {% if user.is_authenticated %}
+                        <div class="user-dropdown">
+                            <a href="#">Hello, {{ user.username }}</a>
+                            <div class="dropdown-content">
+                                <a href="{% url 'account' %}">Account</a>
+                                <a href="{% url 'orders' %}">Orders</a>
+                                <a href="{% url 'logout' %}">Logout</a>
+                            </div>
+                        </div>
+                       
+                        {% endif %}
+                    </li>
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    <li><a href="{% url 'categories' %}">Categories</a></li>
+                    <li><a href="{% url 'products' %}">Products</a></li>
+                    <!-- <li><a href="{% url 'about' %}">About</a></li> -->
+                    <!-- <li><a href="{% url 'contact' %}">Contact</a></li> -->
+                    <li><a href="{% url 'cart' %}">Cart</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <script src="{% static 'js/scripts.js' %}"></script>
+</body>
+</html>

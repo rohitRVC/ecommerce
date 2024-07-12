@@ -1,0 +1,107 @@
+<!-- templates/update_product.html -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        body h1 {
+            text-align: center;
+        }
+
+        body form {
+            margin-left: 200px;
+            margin-right: 200px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Update Product</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="name">Product Name</label>
+        <input type="text" id="name" name="name" value="{{ product.name }}" required>
+
+        <label for="price">Price</label>
+        <input type="number" id="price" name="price" value="{{ product.price }}" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4" required>{{ product.description }}</textarea>
+
+        <label for="image1">Product Image1</label>
+        <input type="file" id="image1" name="image1">
+
+        <label for="image2">Product Image2</label>
+        <input type="file" id="image2" name="image2">
+
+        <label for="image3">Product Image3</label>
+        <input type="file" id="image3" name="image3">
+
+        <label for="image4">Product Image4</label>
+        <input type="file" id="image4" name="image4">
+
+        <label for="image5">Product Image5</label>
+        <input type="file" id="image5" name="image5">
+
+        <label for="image6">Product Image6</label>
+        <input type="file" id="image6" name="image6">
+<br>
+        <button type="submit">Update Product</button>
+    </form>
+</body>
+</html>
+
+{% endblock %}

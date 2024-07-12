@@ -1,0 +1,23 @@
+<!-- templates/admin_update_category.html -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Category</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+</head>
+<body>
+    <h1>Update Category</h1>
+    <div class="container">
+        <form method="POST">
+            {% csrf_token %}
+            <label for="name">Category Name:</label>
+            <input type="text" id="name" name="name" value="{{ category.name }}" required>
+            <button type="submit">Update Category</button>
+        </form>
+    </div>
+</body>
+</html>
