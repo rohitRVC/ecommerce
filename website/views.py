@@ -14,7 +14,14 @@ def index(request):
 
 @login_required
 def categories(request):
-    return render(request, 'categories.html')
+    categories = Category.objects.all()
+    return render(request, 'categories.html', {'categories': categories})
+
+@login_required
+def category_products(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    products = Product.objects.filter(category=category)
+    return render(request, 'category_products.html', {'category': category, 'products': products})
 
 @login_required
 def products(request):
@@ -44,6 +51,7 @@ def cart(request):
     total_price = sum(item.product.price * item.quantity for item in cart_items)
     return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
+@login_required
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart_item, created = CartItem.objects.get_or_create(user=request.user, product=product)
@@ -52,11 +60,13 @@ def add_to_cart(request, product_id):
     cart_item.save()
     return redirect('cart')
 
+@login_required
 def remove_from_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id)
     cart_item.delete()
     return redirect('cart')
 
+@login_required
 def update_cart_quantity(request, item_id, action):
     cart_item = get_object_or_404(CartItem, id=item_id)
     if action == 'increase':
@@ -93,6 +103,7 @@ def signin(request):
         form = SignInForm()
     return render(request, 'signin.html', {'form': form})
 
+@login_required
 def signout(request):
     logout(request)
     return redirect('signin')

@@ -4,6 +4,39 @@
 
 {% block content %}
 
-<h1>This is Categories page</h1>
+<!-- templates/categories.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        .category-button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .category-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Categories</h1>
+        <div>
+            {% for category in categories %}
+            <a href="{% url 'category_products' category.id %}" class="category-button">{{ category.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
+
 
 {% endblock %}

@@ -1,6 +1,7 @@
 <!-- product_details.html -->
 {% extends 'base.html' %}
 
+{% load custom_tags %}
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
@@ -17,7 +18,14 @@
             border-radius: 5px;
         }
         .card {
+            display: flex;
             margin-bottom: 20px;
+        }
+        .container{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -27,18 +35,24 @@
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="card">
-                    <img src="{{ product.image1.url }}" class="card-img-top product-image" alt="Product Image">
-                    <img src="{{ product.image2.url }}" class="card-img-top product-image" alt="Product Image">
-                    <img src="{{ product.image3.url }}" class="card-img-top product-image" alt="Product Image">
-                    <img src="{{ product.image4.url }}" class="card-img-top product-image" alt="Product Image">
-                    <img src="{{ product.image5.url }}" class="card-img-top product-image" alt="Product Image">
-                    <img src="{{ product.image6.url }}" class="card-img-top product-image" alt="Product Image">
+                    {% for i in "123456" %}
+                        {% with image_attr="image"|add:i %}
+                            {% with image_url=product|get_dynamic_attribute:image_attr %}
+                                {% if image_url %}
+                                    <img src="{{ image_url.url }}" class="card-img-top product-image" alt="Product Image {{ i }}">
+                                {% else %}
+                                    <img src="/media/default/default-product.png" class="card-img-top product-image" alt="Default Image">
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endfor %}
                     <div class="card-body">
-                        <h5 class="card-title">Image</h5>
+                        <h5 class="card-title">Images</h5>
                     </div>
                 </div>
             </div>
         </div>
+        
         <div class="row">
             <div class="col-md-6">
                 <p><strong>Category:</strong> {{ product.category }}</p>

@@ -1,9 +1,96 @@
 {% extends 'base.html' %}
 
-{% block title %}About - My E-commerce Site{% endblock %}
+{% block title %}About Us - My E-commerce Site{% endblock %}
 
 {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .about-section {
+            padding: 60px 0;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .about-section h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .about-section p {
+            font-size: 1.2em;
+            color: #777;
+        }
+        .team-section {
+            padding: 60px 0;
+        }
+        .team-section h2 {
+            font-size: 2em;
+            margin-bottom: 40px;
+        }
+        .team-member {
+            margin-bottom: 40px;
+        }
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .team-member h5 {
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+        .team-member p {
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="about-section">
+        <div class="container">
+            <h1>About Us</h1>
+            <p>Welcome to E-Shop, your number one source for all things [product, ie: shoes, electronics]. We're dedicated to giving you the very best of [product], with a focus on dependability, customer service, and uniqueness.</p>
+            <p>Founded in [year] by [Founder Name], [Your Company Name] has come a long way from its beginnings in [starting location]. When [Founder Name] first started out, [his/her/their] passion for [brand message - eg. "eco-friendly cleaning products"] drove [him/her/them] to [action: quit day job, do tons of research, etc.], and gave [him/her/them] the impetus to turn hard work and inspiration into a booming online store. We now serve customers all over [place, ie: the US, the world], and are thrilled to be a part of the [adjective, ie: quirky, eco-friendly, fair trade] wing of the [industry type, ie: fashion, baked goods, watches] industry.</p>
+            <p>We hope you enjoy our products as much as we enjoy offering them to you. If you have any questions or comments, please don't hesitate to contact us.</p>
+            <p>Sincerely,<br>[Founder Name]</p>
+        </div>
+    </div>
 
-<h1>This is About page</h1>
+    <div class="team-section">
+        <div class="container">
+            <h2>Our Team</h2>
+            <div class="row">
+                <!-- Team Member 1 -->
+                <div class="col-md-4 team-member">
+                    <img src="/media/default/default-person.png" alt="Team Member 1">
+                    <h5>Team Member 1</h5>
+                    <p>Position</p>
+                </div>
+                <!-- Team Member 2 -->
+                <div class="col-md-4 team-member">
+                    <img src="/media/default/default-person.png" alt="Team Member 1">
+                    <h5>Team Member 2</h5>
+                    <p>Position</p>
+                </div>
+                <!-- Team Member 3 -->
+                <div class="col-md-4 team-member">
+                    <img src="/media/default/default-person.png" alt="Team Member 3">
+                    <h5>Team Member 3</h5>
+                    <p>Position</p>
+                </div>
+                <!-- Add more team members as needed -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional: Include Bootstrap JS for responsive layout -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
 
 {% endblock %}
