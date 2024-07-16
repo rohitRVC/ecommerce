@@ -27,11 +27,33 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Cart(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def _str_(self):
+        return f"Cart({self.user.username})"
+
+    def total_amount(self):
+        return sum(item.total for item in self.items.all())
+
+# class CartItem(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#     quantity = models.PositiveIntegerField(default=1)
+
+#     def __str__(self):
+#         return f'{self.product.name} - {self.quantity}'
+    
 class CartItem(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE, default=1)  # Use a valid cart ID
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
-    def __str__(self):
-        return f'{self.product.name} - {self.quantity}'
+    def _str_(self):
+        return f"{self.product.name} - {self.quantity}"
+
+    @property
+    def total(self):
+        return self.quantity * self.product.price

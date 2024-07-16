@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import SignUpForm, SignInForm, ProductForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .decorators import login_required
-from .models import Category, Product, CartItem
+from .models import Category, Product, CartItem, Cart
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -46,19 +46,39 @@ def contact(request):
 
 @login_required
 def cart(request):
-    user = User.objects.get(username=request.user.username)  # Ensure that user is a User instance
-    cart_items = CartItem.objects.filter(user=user)
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
-    return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
-
-@login_required
+    # user = User.objects.get(username=request.user.username)  # Ensure that user is a User instance
+    # print(type(user))
+    # cart_items = CartItem.objects.filter(user=user)    
+    # total_price = sum(item.product.price * item.quantity for item in cart_items)
+    # return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_items = cart.items.all()  # Get all items in the cart
+    return render(request, 'cart.html', {'cart': cart, 'cart_items': cart_items})
+    
+@login_required  
 def add_to_cart(request, product_id):
+    # product = get_object_or_404(Product, id=product_id)
+    # cart_item, created = CartItem.objects.get_or_create(user=request.user, product=product)
+    # if not created:
+    #     cart_item.quantity += 1
+    # cart_item.save()
+    # return redirect('cart')
     product = get_object_or_404(Product, id=product_id)
-    cart_item, created = CartItem.objects.get_or_create(user=request.user, product=product)
+    quantity = int(request.POST.get('quantity', 1))  # Get the selected quantity from the form, default to 1
+        # Validate quantity against product stock
+    if quantity < 1:
+        quantity = 1
+    elif quantity > product.stock:
+        quantity = product.stock
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
     if not created:
-        cart_item.quantity += 1
+        cart_item.quantity += quantity  # Add selected quantity to existing cart item
+    else:
+        cart_item.quantity = quantity  # Set quantity if it's a new cart item
     cart_item.save()
     return redirect('cart')
+
 
 @login_required
 def remove_from_cart(request, item_id):
