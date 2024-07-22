@@ -1,12 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
-from .forms import SignUpForm, SignInForm, ProductForm
+from .forms import SignUpForm, SignInForm, ProductForm, CheckoutForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .decorators import login_required
-from .models import Category, Product, CartItem, Cart
+from .models import Category, Product, CartItem, Cart, Checkout, Order, OrderItem
 from django.contrib.auth.models import User
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib import messages
+from django.utils import timezone
 
 # Create your views here.
+
+User = get_user_model()
 
 @login_required
 def index(request):
@@ -46,36 +52,24 @@ def contact(request):
 
 @login_required
 def cart(request):
-    # user = User.objects.get(username=request.user.username)  # Ensure that user is a User instance
-    # print(type(user))
-    # cart_items = CartItem.objects.filter(user=user)    
-    # total_price = sum(item.product.price * item.quantity for item in cart_items)
-    # return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_items = cart.items.all()  # Get all items in the cart
-    return render(request, 'cart.html', {'cart': cart, 'cart_items': cart_items})
+    user = request.user  # This should be a User instance
+    cart, created = Cart.objects.get_or_create(user=user)
+    cart_items = CartItem.objects.filter(cart=cart)
+    context = {
+        'cart_items': cart_items,
+        'cart': cart
+    }
+    return render(request, 'cart.html', context)
     
 @login_required  
 def add_to_cart(request, product_id):
-    # product = get_object_or_404(Product, id=product_id)
-    # cart_item, created = CartItem.objects.get_or_create(user=request.user, product=product)
-    # if not created:
-    #     cart_item.quantity += 1
-    # cart_item.save()
-    # return redirect('cart')
     product = get_object_or_404(Product, id=product_id)
-    quantity = int(request.POST.get('quantity', 1))  # Get the selected quantity from the form, default to 1
-        # Validate quantity against product stock
-    if quantity < 1:
-        quantity = 1
-    elif quantity > product.stock:
-        quantity = product.stock
+    
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
     if not created:
-        cart_item.quantity += quantity  # Add selected quantity to existing cart item
-    else:
-        cart_item.quantity = quantity  # Set quantity if it's a new cart item
+        cart_item.quantity += 1  # Add selected quantity to existing cart item
+   
     cart_item.save()
     return redirect('cart')
 
@@ -95,6 +89,49 @@ def update_cart_quantity(request, item_id, action):
         cart_item.quantity -= 1
     cart_item.save()
     return redirect('cart')
+
+@login_required
+def checkout(request):
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_items = CartItem.objects.filter(cart=cart)
+
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            checkout_instance = form.save(commit=False)
+            checkout_instance.user = request.user
+            checkout_instance.save()
+
+            # Prepare products data for JSONField
+            products_data = []
+            for item in cart_items:
+                products_data.append({
+                    'product_name': item.product.name,
+                    'quantity': item.quantity
+                })
+
+            # Create the Order
+            order = Order.objects.create(
+                user=request.user,
+                status='Pending',
+                order_date=timezone.now(),
+                products=products_data  # Store products data as JSON
+            )
+
+            # Clear the cart
+            cart_items.delete()
+
+            messages.success(request, 'Your order has been placed successfully!')
+            return redirect('orders_view')
+    else:
+        form = CheckoutForm()
+
+    context = {
+        'form': form,
+        'cart_items': cart_items,
+        'total_price': cart.total_amount()
+    }
+    return render(request, 'checkout.html', context)
 
 def about(request):
     return render(request, 'about.html')
@@ -136,9 +173,15 @@ def account_view(request):
     return render(request, 'account.html')
 
 def orders_view(request):
-    # Your orders view logic
-    return render(request, 'orders.html')
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'orders.html', {'orders': orders})
 
+def cancel_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order.status = 'Cancelled'
+    order.save()
+    messages.success(request, 'Your order has been cancelled.')
+    return redirect('orders_view')
 def logout_view(request):
     logout(request)
     return redirect('index')  # Redirect to home or another page after logout
@@ -166,15 +209,6 @@ def admin_products(request):
 
 def admin_users(request):
     return render(request, 'admin_users.html')
-
-# def admin_add_category(request):
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         if name:
-#             Category.objects.create(name=name)
-#             return redirect('admin_categories')
-#     categories = Category.objects.all()
-#     return render(request, 'admin_categories.html', {'categories': categories})
 
 def admin_update_category(request, pk):
     category = get_object_or_404(Category, pk=pk)

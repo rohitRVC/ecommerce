@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Category, Product
+from .models import Category, Product, Checkout
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -27,3 +27,12 @@ class ProductForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['category'].queryset = Category.objects.all()
+
+class CheckoutForm(forms.ModelForm):
+    class Meta:
+        model = Checkout
+        fields = ['address', 'city', 'state', 'zip_code', 'payment_method']
+
+        widgets = {
+            'payment_method': forms.RadioSelect(choices=[('Cash On Delivery', 'Cash On Delivery'), ('Prepaid', 'Prepaid')])
+        }

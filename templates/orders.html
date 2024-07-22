@@ -1,0 +1,63 @@
+<style>
+    .table{
+        /* margin-top: 20px; */
+        margin: 15px 70px;
+        width: 50%;
+        text-align: center;
+    }
+
+    table, th, td{
+        border: 2px solid black; 
+        border-collapse: collapse;
+    }
+</style>
+def orders_view(request):
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'orders.html', {'orders': orders})
+
+# Template: orders.html
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>My Orders</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Order Date</th>
+            <th>Status</th>
+            <th>Products</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>
+                {% load timezone %}
+                {% timezone "Asia/Kolkata" %}
+                    {{ order.order_date }}
+                {% endtimezone %}
+            </td>
+            <td>{{ order.status }}</td>
+            <td>
+                <ul>
+                    {% for product in order.products %}
+                    <li>{{ product.product_name }} (Quantity: {{ product.quantity }})</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>
+                {% if order.status != 'Cancelled' %}
+                <form action="{% url 'cancel_order' order.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Cancel</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
