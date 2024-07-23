@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib import messages
-from django.utils import timezone
+from django.utils.timezone import now
 
 # Create your views here.
 
@@ -94,7 +94,7 @@ def update_cart_quantity(request, item_id, action):
 def checkout(request):
     cart = get_object_or_404(Cart, user=request.user)
     cart_items = CartItem.objects.filter(cart=cart)
-
+    
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
@@ -102,30 +102,28 @@ def checkout(request):
             checkout_instance.user = request.user
             checkout_instance.save()
 
-            # Prepare products data for JSONField
-            products_data = []
+            # Create an Order
+            order = Order.objects.create(user=request.user, order_date=now(), status='Pending')
+            
+            # Create OrderItems
             for item in cart_items:
-                products_data.append({
-                    'product_name': item.product.name,
-                    'quantity': item.quantity
-                })
-
-            # Create the Order
-            order = Order.objects.create(
-                user=request.user,
-                status='Pending',
-                order_date=timezone.now(),
-                products=products_data  # Store products data as JSON
-            )
-
+                OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
+            
             # Clear the cart
             cart_items.delete()
+            cart.delete()
 
-            messages.success(request, 'Your order has been placed successfully!')
-            return redirect('orders_view')
+            # Determine payment method chosen
+            payment_method = form.cleaned_data['payment_method']
+            if payment_method == 'Cash On Delivery':
+                messages.success(request, 'Your order has been placed successfully!')
+                return redirect('orders')
+            elif payment_method == 'Prepaid':
+                messages.info(request, 'Redirecting to payment gateway...')
+                return redirect('payment_gateway')  # Replace with actual URL
     else:
         form = CheckoutForm()
-
+    
     context = {
         'form': form,
         'cart_items': cart_items,
@@ -178,10 +176,12 @@ def orders_view(request):
 
 def cancel_order(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    order.status = 'Cancelled'
-    order.save()
-    messages.success(request, 'Your order has been cancelled.')
-    return redirect('orders_view')
+    if order.status != 'Cancelled':
+        order.status = 'Cancelled'
+        order.save()
+        messages.success(request, 'Your order has been cancelled.')
+    return redirect('orders')
+
 def logout_view(request):
     logout(request)
     return redirect('index')  # Redirect to home or another page after logout

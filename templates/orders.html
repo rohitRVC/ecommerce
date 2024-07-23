@@ -11,11 +11,6 @@
         border-collapse: collapse;
     }
 </style>
-def orders_view(request):
-    orders = Order.objects.filter(user=request.user)
-    return render(request, 'orders.html', {'orders': orders})
-
-# Template: orders.html
 {% extends 'base.html' %}
 
 {% block content %}
@@ -24,7 +19,7 @@ def orders_view(request):
     <thead>
         <tr>
             <th>Order ID</th>
-            <th>Order Date</th>
+            <th>Order Date (IST)</th>
             <th>Status</th>
             <th>Products</th>
             <th>Actions</th>
@@ -34,18 +29,13 @@ def orders_view(request):
         {% for order in orders %}
         <tr>
             <td>{{ order.id }}</td>
-            <td>
-                {% load timezone %}
-                {% timezone "Asia/Kolkata" %}
-                    {{ order.order_date }}
-                {% endtimezone %}
-            </td>
+            <td>{{ order.order_date|date:"d M Y H:i:s" }}</td>
             <td>{{ order.status }}</td>
             <td>
                 <ul>
-                    {% for product in order.products %}
-                    <li>{{ product.product_name }} (Quantity: {{ product.quantity }})</li>
-                    {% endfor %}
+                {% for item in order.items.all %}
+                    <li>{{ item.product }} - Quantity: {{ item.quantity }}</li>
+                {% endfor %}
                 </ul>
             </td>
             <td>
