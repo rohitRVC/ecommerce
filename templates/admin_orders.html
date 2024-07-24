@@ -1,0 +1,50 @@
+<style>
+    table{
+        margin: 20px;
+    }
+    table,th,td{
+        border: 2px solid black;
+        border-collapse: collapse;
+        padding: 10px;
+    }
+</style>
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Manage Orders</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>User</th>
+            <th>Order Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.user.username }}</td>
+            <td>{{ order.order_date }}</td>
+            <td>{{ order.status }}</td>
+            <td>
+                <form action="{% url 'admin_orders' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                    <select name="status" class="form-control" style="display:inline; width:auto;">
+                        <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Processing" {% if order.status == 'Processing' %}selected{% endif %}>Processing</option>
+                        <option value="Accepted" {% if order.status == 'Accepted' %}selected{% endif %}>Accepted</option>
+                        <option value="Rejected" {% if order.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                        <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

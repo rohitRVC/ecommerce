@@ -9,6 +9,10 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.utils.timezone import now
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -174,13 +178,59 @@ def orders_view(request):
     orders = Order.objects.filter(user=request.user)
     return render(request, 'orders.html', {'orders': orders})
 
-def cancel_order(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
-    if order.status != 'Cancelled':
+@login_required
+def view_order_details(request, pk):
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+    order_items = order.items.all()  # Assuming you have a related_name='items' in OrderItem model
+    return render(request, 'order_details.html', {'order': order, 'order_items': order_items})
+
+@login_required
+def cancel_order(request, pk):
+    order = get_object_or_404(Order, pk=pk, user=request.user)
+    if order.status == 'Pending':
         order.status = 'Cancelled'
         order.save()
         messages.success(request, 'Your order has been cancelled.')
+    else:
+        messages.error(request, 'You cannot cancel this order.')
     return redirect('orders')
+
+def download_invoice(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order_items = OrderItem.objects.filter(order=order)
+
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Invoice_{order_id}.pdf"'
+
+    # Create the PDF object, using the response object as its "file."
+    p = canvas.Canvas(response, pagesize=letter)
+    width, height = letter
+
+    # Draw the order details
+    p.drawString(100, height - 100, f"Order ID: {order.id}")
+    p.drawString(100, height - 120, f"Order Date: {order.order_date}")
+    p.drawString(100, height - 140, f"Status: {order.status}")
+
+    # Draw the table header
+    p.drawString(100, height - 180, "Product Name")
+    p.drawString(300, height - 180, "Quantity")
+    p.drawString(400, height - 180, "Price")
+
+    # Draw the order items
+    y = height - 200
+    for item in order_items:
+        p.drawString(100, y, item.product.name)
+        p.drawString(300, y, str(item.quantity))
+        p.drawString(400, y, str(item.product.price))
+        y -= 20
+
+    # Close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+
+    return response
+
 
 def logout_view(request):
     logout(request)
@@ -191,6 +241,17 @@ def admin_home(request):
 
 def admin_dashboard(request):
     return render(request, 'admin_dashboard.html')
+
+def admin_orders(request):
+    orders = Order.objects.all()
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        status = request.POST.get('status')
+        order = get_object_or_404(Order, id=order_id)
+        order.status = status
+        order.save()
+        return redirect('admin_orders')
+    return render(request, 'admin_orders.html', {'orders': orders})
 
 def admin_categories(request):
     if request.method == 'POST':

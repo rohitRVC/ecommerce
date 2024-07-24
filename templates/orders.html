@@ -1,14 +1,11 @@
 <style>
-    .table{
-        /* margin-top: 20px; */
-        margin: 15px 70px;
-        width: 50%;
-        text-align: center;
+    table{
+        margin: 20px;
     }
-
-    table, th, td{
-        border: 2px solid black; 
+    table,th,td{
+        border: 2px solid black;
         border-collapse: collapse;
+        padding: 10px;
     }
 </style>
 {% extends 'base.html' %}
@@ -19,9 +16,8 @@
     <thead>
         <tr>
             <th>Order ID</th>
-            <th>Order Date (IST)</th>
+            <th>Order Date</th>
             <th>Status</th>
-            <th>Products</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -29,17 +25,11 @@
         {% for order in orders %}
         <tr>
             <td>{{ order.id }}</td>
-            <td>{{ order.order_date|date:"d M Y H:i:s" }}</td>
+            <td>{{ order.order_date }}</td>
             <td>{{ order.status }}</td>
             <td>
-                <ul>
-                {% for item in order.items.all %}
-                    <li>{{ item.product }} - Quantity: {{ item.quantity }}</li>
-                {% endfor %}
-                </ul>
-            </td>
-            <td>
-                {% if order.status != 'Cancelled' %}
+                <a href="{% url 'view_order_details' order.id %}"><button class="btn btn-info">View Details</button></a>
+                {% if order.status == 'Pending' %}
                 <form action="{% url 'cancel_order' order.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Cancel</button>

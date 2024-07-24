@@ -1,0 +1,42 @@
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Order Invoice</h1>
+    <p>Order ID: {{ order.id }}</p>
+    <p>Order Date: {{ order.order_date }}</p>
+    <p>Status: {{ order.status }}</p>
+    <h2>Items</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.product.price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

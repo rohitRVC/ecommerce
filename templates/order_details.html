@@ -1,0 +1,57 @@
+<style>
+    table {
+        margin-left: 500px;
+    }
+    table, th, td {
+        border: 2px solid black;
+        border-collapse: collapse;
+        padding: 10px;
+        text-align: center;
+    }
+    h1, h2 {
+        text-align: center;
+    }
+    .btn {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+</style>
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Order Details</h1>
+<p>Order ID: {{ order.id }}</p>
+<p>Order Date: {{ order.order_date }}</p>
+<p>Status: {{ order.status }}</p>
+<h2>Items</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order_items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.product.price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'orders' %}"><button class="btn btn-secondary">Back to Orders</button></a>
+<a href="{% url 'download_invoice' order.id %}"><button class="btn btn-primary">Download Invoice</button></a>
+{% endblock %}
