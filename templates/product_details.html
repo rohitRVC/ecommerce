@@ -30,6 +30,9 @@
         .product-details {
             margin-top: 20px;
         }
+        .btn-primary{
+            
+        }
     </style>
 </head>
 <body>
@@ -54,7 +57,7 @@
         </div>
         
         <div class="row product-details">
-            <div class="col-md-6">
+            <div class="col md-6">
                 <p><strong>Category:</strong> {{ product.category }}</p>
                 <p><strong>Price:</strong> {{ product.price }}</p>
                 <p><strong>Description:</strong></p>
@@ -62,8 +65,8 @@
             </div>
         </div>
         <div class="row product-info">
-            <div class="col-md-6">
-                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Add to Cart</a>
+            <div class="col md-6">
+                <a href="{% url 'add_to_cart' product.id %}"><button class="btn btn-primary">Add to Cart</button></a>
             </div>
         </div>
     </div>
