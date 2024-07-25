@@ -30,7 +30,7 @@
             {% for product in products %}
             <tr>
                 <td>{{ product.name }}</td>
-                <td>${{ product.price }}</td>
+                <td>₹{{ product.price }}</td>
                 <td>{{ product.category }}</td>
                 <!-- <td><img src="{{ product.image1.url }}" alt="Product Image" style="max-width: 100px;"></td> -->
                 <td><a href="{% url 'admin_update_product' product.id %}">Update</a></td>

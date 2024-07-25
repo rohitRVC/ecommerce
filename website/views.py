@@ -13,6 +13,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse
+import random
 
 # Create your views here.
 
@@ -20,7 +21,9 @@ User = get_user_model()
 
 @login_required
 def index(request):
-    return render(request, 'index.html')
+    products = list(Product.objects.all())
+    random_products = random.sample(products, min(len(products), 10))
+    return render(request, 'index.html', {'random_products': random_products})
 
 @login_required
 def categories(request):
@@ -37,7 +40,7 @@ def category_products(request, category_id):
 def products(request):
     products = Product.objects.all()
     # Pagination settings
-    paginator = Paginator(products, 15)  # 15 products per page
+    paginator = Paginator(products, 12)  # 15 products per page
     page = request.GET.get('page')
     try:
         products_paginated = paginator.page(page)
@@ -175,7 +178,7 @@ def account_view(request):
     return render(request, 'account.html')
 
 def orders_view(request):
-    orders = Order.objects.filter(user=request.user)
+    orders = Order.objects.filter(user=request.user).order_by('-order_date')
     return render(request, 'orders.html', {'orders': orders})
 
 @login_required
@@ -243,7 +246,7 @@ def admin_dashboard(request):
     return render(request, 'admin_dashboard.html')
 
 def admin_orders(request):
-    orders = Order.objects.all()
+    orders = Order.objects.all().order_by('-order_date')
     if request.method == 'POST':
         order_id = request.POST.get('order_id')
         status = request.POST.get('status')
@@ -330,3 +333,17 @@ def admin_delete_product(request, pk):
         product.delete()
         return redirect('admin_products')  # Redirect to a list view or another appropriate page    
     return render(request, 'admin_delete_product.html', {'product': product})
+
+
+def admin_orders_by_status(request, status):
+    orders = Order.objects.filter(status=status)
+    return render(request, 'admin_orders_by_status.html', {'orders': orders, 'status': status})
+
+def update_order_status(request, order_id):
+    if request.method == 'POST':
+        order = get_object_or_404(Order, id=order_id)
+        status = request.POST.get('status')
+        order.status = status
+        order.save()
+        return redirect('admin_orders_by_status', status=order.status)
+    return render(request, 'update_order_status.html', {'order_id': order_id})

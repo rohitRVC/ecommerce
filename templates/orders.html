@@ -1,6 +1,14 @@
 <style>
+    .container-table-order{
+        margin: auto;
+        background-color: #eceff0;
+        width: 70%;
+        padding: 20px;
+        border-radius: 5px;
+    }
     table{
-        margin: 20px;
+        width: 7    0%;
+        margin: auto;
     }
     table,th,td{
         border: 2px solid black;
@@ -11,33 +19,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>My Orders</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Order Date</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for order in orders %}
-        <tr>
-            <td>{{ order.id }}</td>
-            <td>{{ order.order_date }}</td>
-            <td>{{ order.status }}</td>
-            <td>
-                <a href="{% url 'view_order_details' order.id %}"><button class="btn btn-info">View Details</button></a>
-                {% if order.status == 'Pending' %}
-                <form action="{% url 'cancel_order' order.id %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Cancel</button>
-                </form>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container-table-order">
+    <h1>My Orders</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.order_date }}</td>
+                <td>{{ order.status }}</td>
+                <td>
+                    <a href="{% url 'view_order_details' order.id %}"><button class="btn btn-info">View Details</button></a>
+                    {% if order.status == 'Pending' %}
+                    <form action="{% url 'cancel_order' order.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Cancel</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

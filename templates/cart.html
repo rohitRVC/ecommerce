@@ -3,10 +3,12 @@
 {% block title %}Cart - My E-commerce Site{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Your Cart</h1>
+<div class="container-cart">
+    <a href="{% url 'index' %}"><button class="btn btn-secondary">Continue Shopping</button></a>
+    <h1 class="mb-4">Your Cart</h1>
     {% if cart_items %}
-        <table>
+    <div class="table-responsive">
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Product</th>
@@ -23,33 +25,94 @@
                         <img src="{{ item.product.image1.url }}" alt="{{ item.product.name }}" class="product-image">
                         {{ item.product.name }}
                     </td>
-                    <td class="quantity-control">
-                        <form method="post" action="{% url 'update_cart_quantity' item.id 'decrease' %}">
-                            {% csrf_token %}
-                            <button type="submit">-</button>
-                        </form>
-                        {{ item.quantity }}
-                        <form method="post" action="{% url 'update_cart_quantity' item.id 'increase' %}">
-                            {% csrf_token %}
-                            <button type="submit">+</button>
-                        </form>
-                    </td>
-                    <td>{{ item.product.price }}</td>
-                    <td>{{ item.total }}</td>
                     <td>
-                        <form method="post" action="{% url 'remove_from_cart' item.id %}">
+                        <div class="quantity-control">
+                            <form method="post" action="{% url 'update_cart_quantity' item.id 'decrease' %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">-</button>
+                            </form>
+                            {{ item.quantity }}
+                            <form method="post" action="{% url 'update_cart_quantity' item.id 'increase' %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">+</button>
+                            </form>
+                        </div>
+                    </td>
+                    <td>₹{{ item.product.price }}</td>
+                    <td>₹{{ item.total }}</td>
+                    <td>
+                        <form method="post" action="{% url 'remove_from_cart' item.id %}" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit">Remove</button>
+                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
                         </form>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <h2>Total Price: {{ cart.total_amount }}</h2>
-        <a href="{% url 'checkout' %}"><button type="button">Checkout</button></a>
+        <h2 class="mt-4">Total Price: ₹{{ cart.total_amount }}</h2>
+        <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg mt-3">Checkout</a>
+    </div>
     {% else %}
-        <p>Your cart is empty.</p>
+    <p>Your cart is empty.</p>
     {% endif %}
 </div>
+
+<style>
+    .container-cart {
+        margin: 10px 100px 20px 100px;
+            background-color: #f9f9f9;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        table{
+            width: 90%;
+            margin: auto;
+        }
+        table, th, td{
+            border: 2px solid black;
+            border-collapse: collapse;
+            align-items: center;
+        }
+        th, td{
+            padding-left: 20px;
+            padding: 20px;
+        }
+    .product-image {
+        width: 100px;  /* Fixed width for consistent image size */
+        height: 100px; /* Fixed height for consistent image size */
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .btn-outline-secondary {
+        border-color: #6c757d;
+        color: #6c757d;
+    }
+    .btn-outline-secondary:hover {
+        background-color: #e9ecef;
+        color: #6c757d;
+    }
+    .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 10px;
+    width: 15%;
+    border-radius: 5px;
+    margin: auto;
+    color: white;
+}
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+</style>
+
 {% endblock %}

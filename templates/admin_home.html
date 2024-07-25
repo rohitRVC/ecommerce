@@ -1,9 +1,110 @@
+<style>
+    .container-admin-home {
+        width: 80%;
+        margin: auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        gap: 20px;
+    }
+    .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        width: 230px;
+        flex: 1 1 230px;
+        border-radius: 8px;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    .card-title {
+        padding-top: 10px;
+        padding-left: 20px;
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: white;
+    }
+    .card-text {
+        padding-left: 20px;
+        font-size: 1rem;
+        color: white;
+    }
+    .btn-light {
+        color: black;
+        background-color: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    .btn-light:hover {
+        color: #0056b3;
+        background-color: #e2e6ea;
+    }
+    .bg-primary {
+        background-color: #007bff !important;
+    }
+    .bg-danger {
+        background-color: #dc3545 !important;
+    }
+    .bg-success {
+        background-color: #28a745 !important;
+    }
+    .bg-info {
+        background-color: #17a2b8 !important;
+    }
+    .bg-dark {
+        background-color: #344446 !important;
+    }
+</style>
+
 {% extends 'base.html' %}
 
-{% block title %}Cart - My E-commerce Site{% endblock %}
+{% block title %}Admin Orders Overview{% endblock %}
 
 {% block content %}
-
-<h1>This is Admins Home page</h1>
-
+<div class="container-admin-home mt-4">
+    <h1>Order Status Overview</h1>
+    <div class="card-container">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Pending Orders</h5>
+                <p class="card-text">Manage all pending orders.</p>
+                <a href="{% url 'admin_orders_by_status' 'Pending' %}" class="btn btn-light">View Pending Orders</a>
+            </div>
+        </div>
+        <div class="card text-white bg-danger mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Rejected Orders</h5>
+                <p class="card-text">Manage all rejected orders.</p>
+                <a href="{% url 'admin_orders_by_status' 'Rejected' %}" class="btn btn-light">View Rejected Orders</a>
+            </div>
+        </div>
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Accepted Orders</h5>
+                <p class="card-text">Manage all accepted orders.</p>
+                <a href="{% url 'admin_orders_by_status' 'Accepted' %}" class="btn btn-light">View Accepted Orders</a>
+            </div>
+        </div>
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Delivered Orders</h5>
+                <p class="card-text">Manage all delivered orders.</p>
+                <a href="{% url 'admin_orders_by_status' 'Delivered' %}" class="btn btn-light">View Delivered Orders</a>
+            </div>
+        </div>
+        <div class="card text-white bg-dark mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Processing Orders</h5>
+                <p class="card-text">Manage all processing orders.</p>
+                <a href="{% url 'admin_orders_by_status' 'Processing' %}" class="btn btn-light">View Processing Orders</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
+

@@ -3,8 +3,6 @@
 {% block title %}Categories - My E-commerce Site{% endblock %}
 
 {% block content %}
-
-<!-- templates/categories.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +10,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-        .category-button {
+        .container {
+        background-color: #e9e8e8;
+        padding: 40px;
+        margin-left: 200px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 1100px; 
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+}
+        .custom-category-button {
             display: inline-block;
             margin: 10px;
             padding: 10px 20px;
@@ -20,8 +31,11 @@
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
         }
-        .category-button:hover {
+        .custom-category-button:hover {
             background-color: #0056b3;
         }
     </style>
@@ -31,12 +45,10 @@
         <h1>Categories</h1>
         <div>
             {% for category in categories %}
-            <a href="{% url 'category_products' category.id %}" class="category-button">{{ category.name }}</a>
+            <a href="{% url 'category_products' category.id %}" class="custom-category-button">{{ category.name }}</a>
             {% endfor %}
         </div>
     </div>
 </body>
 </html>
-
-
 {% endblock %}
