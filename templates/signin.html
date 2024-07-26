@@ -1,23 +1,15 @@
-{% extends "base.html" %}
 
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <style>
-    body {
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    }
+    
 
-    .container {
-    background-color: #fff;
+    .container-signin {
+        margin: auto;
+    background-color: rgba(236, 236, 236, 0.793);
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 400px; 
+    width: 70%; 
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -105,11 +97,11 @@ a:hover {
     background-color: #f1f1f1;
 }
 </style>
-
+{% extends "base.html" %}
 {% block title %}Sign In - My E-commerce Site{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-signin">
     <h2>Sign In ROhit@001</h2>
     <form method="post" novalidate>
         {% csrf_token %}

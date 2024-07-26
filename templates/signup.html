@@ -1,9 +1,21 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    .container-signup{
+        width: 70%;
+        margin: auto;
+        background-color: rgba(236, 236, 236, 0.793);
+        padding: 20px;
+    }
+</style>
+
+
+
 {% extends "base.html" %}
 
 {% block title %}Sign Up - My E-commerce Site{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-signup">
     <h2>Sign Up</h2>
     <form method="post" novalidate>
         {% csrf_token %}

@@ -1,4 +1,3 @@
-<!-- product_details.html -->
 {% extends 'base.html' %}
 
 {% load custom_tags %}
@@ -20,6 +19,7 @@
         }
         .card {
             margin-bottom: 20px;
+            position: relative;
         }
         .container {
             margin-top: 20px;
@@ -30,9 +30,38 @@
         .product-details {
             margin-top: 20px;
         }
-        .btn-primary{
-            
+        .btn-primary {
+            /* Custom styles for the button, if any */
+            width: 200px;
         }
+        .image-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .image-overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 5px;
+        }
+        .image-overlay .close-btn {
+        position: absolute;
+        top: 0px;
+        right: 10px;
+        background: #0000;
+        border: none;
+        font-size: 50px;
+        cursor: pointer;
+        z-index: 1001;
+}
     </style>
 </head>
 <body>
@@ -45,9 +74,9 @@
                         {% with image_attr="image"|add:i %}
                             {% with image_url=product|get_dynamic_attribute:image_attr %}
                                 {% if image_url %}
-                                    <img src="{{ image_url.url }}" class="card-img-top product-image" alt="Product Image {{ i }}">
+                                    <img src="{{ image_url.url }}" class="card-img-top product-image" alt="Product Image {{ i }}" onclick="showOverlay('{{ image_url.url }}')">
                                 {% else %}
-                                    <img src="/media/default/default-product.png" class="card-img-top product-image" alt="Default Image">
+                                    <img src="/media/default/default-product.png" class="card-img-top product-image" alt="Default Image" onclick="showOverlay('/media/default/default-product.png')">
                                 {% endif %}
                             {% endwith %}
                         {% endwith %}
@@ -57,7 +86,7 @@
         </div>
         
         <div class="row product-details">
-            <div class="col md-6">
+            <div class="col-md-6">
                 <p><strong>Category:</strong> {{ product.category }}</p>
                 <p><strong>Price:</strong> {{ product.price }}</p>
                 <p><strong>Description:</strong></p>
@@ -65,14 +94,33 @@
             </div>
         </div>
         <div class="row product-info">
-            <div class="col md-6">
+            <div class="col-md-6">
                 <a href="{% url 'add_to_cart' product.id %}"><button class="btn btn-primary">Add to Cart</button></a>
             </div>
         </div>
     </div>
 
+    <!-- Image overlay -->
+    <div class="image-overlay" id="imageOverlay">
+        <button class="close-btn" onclick="hideOverlay()">×</button>
+        <img src="" alt="Full Size Image" id="fullSizeImage">
+    </div>
+
     <!-- Optional: Include Bootstrap JS for button styles -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showOverlay(imageUrl) {
+            const overlay = document.getElementById('imageOverlay');
+            const fullSizeImage = document.getElementById('fullSizeImage');
+            fullSizeImage.src = imageUrl;
+            overlay.style.display = 'flex';
+        }
+
+        function hideOverlay() {
+            const overlay = document.getElementById('imageOverlay');
+            overlay.style.display = 'none';
+        }
+    </script>
 </body>
 </html>
 
