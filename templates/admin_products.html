@@ -11,38 +11,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product List</title>
     <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <style>
+        .container-ad{
+            margin: auto;
+            width: 80%;
+            margin-bottom: 10px;
+        }
+        .container-ad button{
+            margin-left: 43%;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <button><a href="{% url 'admin_add_product' %}">Add Product</a></button>
-    <h1>Product List</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Category</th>
-                <!-- <th>Image</th> -->
-                <th>Update</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for product in products %}
-            <tr>
-                <td>{{ product.name }}</td>
-                <td>₹{{ product.price }}</td>
-                <td>{{ product.category }}</td>
-                <!-- <td><img src="{{ product.image1.url }}" alt="Product Image" style="max-width: 100px;"></td> -->
-                <td><a href="{% url 'admin_update_product' product.id %}">Update</a></td>
-                <td><a href="{% url 'admin_delete_product' product.id %}">Delete</a></td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6">No products available</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
+    <div class="container-ad">
+
+        <button><a href="{% url 'admin_add_product' %}">Add Product</a></button>
+        <h1>Product List</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <!-- <th>Image</th> -->
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>₹{{ product.price }}</td>
+                    <td>{{ product.category }}</td>
+                    <!-- <td><img src="{{ product.image1.url }}" alt="Product Image" style="max-width: 100px;"></td> -->
+                    <td><a href="{% url 'admin_update_product' product.id %}">Update</a></td>
+                    <td><a href="{% url 'admin_delete_product' product.id %}">Delete</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No products available</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </body>
 </html>
 {% endblock %}

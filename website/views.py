@@ -14,6 +14,14 @@ from reportlab.pdfgen import canvas
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse
 import random
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
+from django.db.models import Sum
+import urllib, base64
+import io
+from django.db.models.functions import TruncMonth
+
 
 # Create your views here.
 
@@ -243,7 +251,68 @@ def admin_home(request):
     return render(request, 'admin_home.html')
 
 def admin_dashboard(request):
-    return render(request, 'admin_dashboard.html')
+    # Fetch category-wise sales data
+    category_sales = (
+        OrderItem.objects
+        .values('product__category__name')
+        .annotate(total_sales=Sum('quantity'))
+    )
+    
+    labels = [cs['product__category__name'] for cs in category_sales]
+    sizes = [cs['total_sales'] for cs in category_sales]
+    colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6']
+    
+    # Dynamically generate explode list
+    explode = [0] * len(sizes)
+    if sizes:
+        explode[0] = 0.1  # explode 1st slice if there is at least one size
+
+    # Generate pie chart
+    fig, ax = plt.subplots()
+    ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%',
+           shadow=True, startangle=140)
+    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    # Save the pie chart to a bytes buffer
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    pie_string = base64.b64encode(buf.read())
+    pie_uri = urllib.parse.quote(pie_string)
+    plt.close()
+
+    # Fetch monthly sales data
+    monthly_sales = (
+        OrderItem.objects
+        .annotate(month=TruncMonth('order__order_date'))
+        .values('month')
+        .annotate(total_sales=Sum('quantity'))
+        .order_by('month')
+    )
+
+    months = [ms['month'].strftime('%B %Y') for ms in monthly_sales]
+    sales = [ms['total_sales'] for ms in monthly_sales]
+
+    # Generate bar chart
+    fig, ax = plt.subplots()
+    ax.bar(months, sales, color='#66b3ff')
+
+    ax.set_xlabel('Month')
+    ax.set_ylabel('Total Sales')
+    ax.set_title('Monthly Sales')
+
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+
+    # Save the bar chart to a bytes buffer
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    bar_string = base64.b64encode(buf.read())
+    bar_uri = urllib.parse.quote(bar_string)
+    plt.close()
+
+    return render(request, 'admin_dashboard.html', {'pie_data': pie_uri, 'bar_data': bar_uri})
 
 def admin_orders(request):
     orders = Order.objects.all().order_by('-order_date')
